@@ -388,7 +388,7 @@
           row("Alt. notation", r.alternative_notation) +
           row("Allele bkgd.", r.allele_background) +
           row("ISBT allele", r.isbt_allele_designation) +
-          row("Phenotype", r.phenotype) +
+          row("Observed phenotype", r.phenotype) +
         '</div></div>' +
 
         '<div class="field-group"><h4>Genomic location</h4><div class="field-list">' +
