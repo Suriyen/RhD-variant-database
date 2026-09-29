@@ -380,7 +380,7 @@
 
       var citeText = (r.key_reference || "Reference not specified") +
         ". Cited in: Blood Group Non-Coding Variant Database, variant " + r.variant_id +
-        " (" + r.gene + "). Compiled by Jun Liu, MD, PhD (Chai Lab, Brigham and Women's Hospital / Harvard Medical School).";
+        " (" + r.gene + "). Compiled by Jun Liu, MD, PhD; Devin Friedrich; Suriyen Subramaniam; Vedaamrutha Reddy; and William Yang (Chai Lab, Brigham and Women's Hospital / Harvard Medical School).";
 
       drawerBody.innerHTML =
         '<div class="field-group"><h4>Identity</h4><div class="field-list">' +
