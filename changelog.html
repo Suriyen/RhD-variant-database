@@ -50,6 +50,21 @@
     </div>
 
     <section>
+      <h3 style="color:var(--accent); margin-bottom:6px">2026-09-29: Site reformatting + bugfixes</h3>
+      <div class="prose">
+        <p>A round of layout, navigation, and browser changes, plus one data cleanup. No variant records were edited; the only data change removes rows that were never variants.</p>
+        <ul>
+          <li><strong>Data cleanup:</strong> removed 12 non-variant rows. The database now holds 217 variants (Kell 19, Kidd 13); the definitions those legend rows carried remain on the <a href="methods.html">Methods</a> page. CSV/JSON downloads regenerated accordingly.</li>
+          <li><strong>Pages and navigation:</strong> merged the Downloads and Citation pages into a single <a href="download-cite.html">Download and Cite</a> page (downloads and schema first, then citation guidance), and added Changelog to the top navigation. The top menu now reads Browse, Statistics, Methods, Download and Cite, About, Changelog.</li>
+          <li><strong>Browse table:</strong> filters are now multi-select checkbox dropdowns (options within a filter are combined with OR, separate filters with AND). The 25-per-page pager is replaced by a single scrollable table with pinned column headers, sized to fit the page width. The Phenotype column is renamed "Observed phenotype", matching the variant detail panel.</li>
+          <li><strong>Citation and attribution:</strong> added Devin Friedrich, Suriyen Subramaniam, Vedaamrutha Reddy, and William Yang to the database citation. Acknowledgments now lists authors and data compilation/curation contributors separately.</li>
+          <li><strong>Layout and text:</strong> trimmed redundant intro sentences and callout boxes sections. Reformatted the mobile site for accessibility.</li>
+          <li><strong>Bug fixes:</strong> links to a section of a page (e.g. "see the scope", "Browse the variants") no longer land with the heading hidden under the sticky top bar; the Statistics page's "Methods" links now open the Validation tier legend and Base-editing feasibility sections directly instead of the top of Methods; the browse table no longer scrolls sideways on desktop because of long HGVS strings; the top navigation switches to the menu button before its tabs can overflow; filter dropdowns are no longer clipped by the browser panel; checkboxes and scrollbars now follow the manual light/dark toggle.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
       <h3 style="color:var(--accent); margin-bottom:6px">2026-08-14: NIH-convention & domain-accuracy audit</h3>
       <div class="prose">
         <p>Ran two independent audits: a website-design pass comparing the site's text and structure against NCBI/NIH resource-page conventions (ClinVar's "What is ClinVar?", the NCBI variation guide), and a blood group genetics domain pass checking terminology and factual framing against ISBT nomenclature. Changes made as a result:</p>

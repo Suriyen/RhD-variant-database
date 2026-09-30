@@ -256,7 +256,6 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 /* ---------- system cards ---------- */
 .system-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 @media (max-width: 980px) { .system-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .system-grid { grid-template-columns: 1fr; } }
 
 .system-card {
   text-align: left; cursor: pointer;
@@ -338,9 +337,12 @@ table.variant-table { width: 100%; border-collapse: collapse; font-size: 13.5px;
 .variant-table th:nth-child(5) { width: 9%; }  /* gnomAD AF */
 .variant-table th:nth-child(6) { width: 16%; } /* Validation */
 .variant-table th:nth-child(7) { width: 12%; } /* Audit */
-/* phones: drop the gnomAD AF column (still shown in the row's detail drawer) */
+/* phones: drop the gnomAD AF column (still shown in the row's detail drawer),
+   and let the table keep readable column widths, scrolling sideways instead */
 @media (max-width: 640px) {
   .variant-table th:nth-child(5), .variant-table td:nth-child(5) { display: none; }
+  .table-scroll { overflow-x: auto; }
+  table.variant-table { min-width: 720px; }
 }
 .variant-table thead th {
   position: sticky; top: 0; background: var(--surface); z-index: 1;
@@ -455,7 +457,7 @@ table.variant-table { width: 100%; border-collapse: collapse; font-size: 13.5px;
 .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 20px; }
 @media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 640px) { .grid-2, .grid-4 { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
 
 /* ---------- bar charts (stats page) ---------- */
 .chart-card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 20px 22px; box-shadow: var(--shadow-sm); }
