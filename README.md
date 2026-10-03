@@ -1,9 +1,11 @@
 # Blood Group Non-Coding Variant Database
 
-A static, searchable website cataloging **234 non-coding and regulatory
-variants** across 8 blood group systems: ABO, RHD, RHCE, Duffy (ACKR1),
-Kell (KEL), Kidd (SLC14A1), MNS (GYPA/GYPB), and Kell Other Antigens
-(Kp<sup>a</sup>/Kp<sup>b</sup>, Js<sup>a</sup>/Js<sup>b</sup>).
+A static, searchable website cataloging **86 non-coding and regulatory
+variants** in the RHD gene (Rh blood group system, ISBT 004).
+
+The site previously also covered ABO, RHCE, Duffy (ACKR1), Kell (KEL), Kidd
+(SLC14A1), MNS (GYPA/GYPB), and Kell Other; those tables were removed from
+the data on 2026-10-03 and remain in git history (commit `3818133`).
 
 Built for the **Chai Lab**, Department of Pathology, Brigham and Women's
 Hospital / Harvard Medical School. Data compiled and curated by **Jun Liu,
@@ -12,9 +14,9 @@ MD, PhD**.
 ## What's here
 
 **Pages**
-- `index.html`: the variant browser: search, filter by system / category /
+- `index.html`: the variant browser: search, filter by category /
   validation tier / audit status, sortable table, per-variant detail drawer.
-- `stats.html`: dataset statistics (coverage by system, category, evidence
+- `stats.html`: dataset statistics (coverage by category, evidence
   tier, audit status, base-editing feasibility), computed live from the same
   data the browser reads.
 - `download-cite.html`: CSV and JSON download of the full dataset, with schema
@@ -62,9 +64,8 @@ MD, PhD**.
 
 ## Editing the data
 
-1. Edit `data/variants_raw.json` (grouped by system: `ABO`, `RHD`, `RHCE`,
-   `Duffy`, `Kell`, `Kidd`, `MNS`, `KellOther`, each with a `meta`, `headers`,
-   and `variants` array).
+1. Edit `data/variants_raw.json` (grouped by gene; currently only `RHD`,
+   with a `meta`, `headers`, and `variants` array).
 2. Run `python3 scripts/normalize_data.py` from the `scripts/` directory.
 3. Refresh `index.html` in a browser to check the change.
 
@@ -81,11 +82,6 @@ BWH/Harvard-hosted web space. No build step required.
       `download-cite.html` → Usage & license) and update that section.
 - [ ] Fill in `scripts/update_variants.py` if the quarterly auto-update
       workflow should actually run.
-- [ ] Resolve the 3 records still flagged from the full citation audit
-      (see `changelog.html` → 2026-08-13): ABO-NC-036, and one reference
-      each on ACKR1-NC-002 and KELLOTHER-NC-010, whose cited PMIDs don't
-      match their descriptions and couldn't be confidently replaced by
-      search alone.
 - [ ] All 88 unique cited PMIDs have been checked against real PubMed
       metadata (author/journal/year); gnomAD v4 and TOPMed allele
       frequencies themselves have **not** been independently re-verified

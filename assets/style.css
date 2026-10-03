@@ -212,24 +212,6 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 .section-head { margin-bottom: 22px; }
 .section-head h2 { font-size: 22px; }
 
-/* ---------- system cards ---------- */
-.system-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-@media (max-width: 980px) { .system-grid { grid-template-columns: repeat(2, 1fr); } }
-
-.system-card {
-  text-align: left; cursor: pointer;
-  border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
-  padding: 16px; display: flex; flex-direction: column; gap: 10px;
-  transition: border-color .15s ease, transform .15s ease;
-  color: inherit; font: inherit;
-}
-.system-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-.system-card.is-active { border-color: var(--accent); background: var(--accent-soft); }
-.system-card .gene { font-family: var(--font-mono); font-weight: 700; font-size: 15px; }
-.system-card .sys-name { font-size: 12.5px; color: var(--muted); }
-.system-card .sys-count { font-family: var(--font-mono); font-size: 20px; font-weight: 700; margin-top: auto; }
-.system-card .sys-count small { font-family: var(--font-sans); font-weight: 500; font-size: 11.5px; color: var(--muted); margin-left: 4px; }
-
 /* ---------- browser toolbar ---------- */
 /* overflow stays visible so the filter dropdown panels aren't clipped */
 .browser-shell { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }

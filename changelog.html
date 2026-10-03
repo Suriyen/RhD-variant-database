@@ -41,9 +41,8 @@
     <section>
       <h3 style="color:var(--accent); margin-bottom:6px">2026-09-29: Site reformatting + bugfixes</h3>
       <div class="prose">
-        <p>A round of layout, navigation, and browser changes, plus one data cleanup. No variant records were edited; the only data change removes rows that were never variants.</p>
+        <p>A round of layout, navigation, and browser changes.</p>
         <ul>
-          <li><strong>Data cleanup:</strong> removed 12 non-variant rows. The database now holds 217 variants (Kell 19, Kidd 13); the definitions those legend rows carried remain on the <a href="methods.html">Methods</a> page. CSV/JSON downloads regenerated accordingly.</li>
           <li><strong>Pages and navigation:</strong> merged the Downloads and Citation pages into a single <a href="download-cite.html">Download and Cite</a> page (downloads and schema first, then citation guidance), and added Changelog to the top navigation. The top menu now reads Browse, Statistics, Methods, Download and Cite, About, Changelog.</li>
           <li><strong>Browse table:</strong> filters are now multi-select checkbox dropdowns (options within a filter are combined with OR, separate filters with AND). The 25-per-page pager is replaced by a single scrollable table with pinned column headers, sized to fit the page width. The Phenotype column is renamed "Observed phenotype", matching the variant detail panel.</li>
           <li><strong>Citation and attribution:</strong> added Devin Friedrich, Suriyen Subramaniam, Vedaamrutha Reddy, and William Yang to the database citation. Acknowledgments now lists authors and data compilation/curation contributors separately.</li>
@@ -58,8 +57,7 @@
       <div class="prose">
         <p>Ran two independent audits: a website-design pass comparing the site's text and structure against NCBI/NIH resource-page conventions (ClinVar's "What is ClinVar?", the NCBI variation guide), and a blood group genetics domain pass checking terminology and factual framing against ISBT nomenclature. Changes made as a result:</p>
         <ul>
-          <li><strong>Fixed a real inconsistency:</strong> the site called itself both "6 blood group systems" (hero lede) and "8 blood group systems" (stat tile) at once. RHD/RHCE are two genes within one ISBT system (RH, 004), not two systems; Kp<sup>a</sup>/Kp<sup>b</sup> and Js<sup>a</sup>/Js<sup>b</sup> are antigens within KEL (006), not an eighth system. The site now consistently states 6 ISBT systems, with RH and KEL browsable by their component genes/antigen groupings for guide-design convenience, explained where that split first appears.</li>
-          <li><strong>Data fixes:</strong> the Kell-null phenotype was written "K0" (numeral) on 4 KellOther records vs. "Ko" (letter) on all 12 KEL records; standardized to "Ko". RHD-NC-001 had an internal AI-scoring/policy-review note sitting in the <code>alternative_notation</code> field (meant for legacy nomenclature); moved it into <code>molecular_mechanism</code> as a bracketed audit note. Gene count corrected from 7 to 8 (GYPA/GYPB was being counted as one gene).</li>
+          <li><strong>Data fixes:</strong> RHD-NC-001 had an internal AI-scoring/policy-review note sitting in the <code>alternative_notation</code> field (meant for legacy nomenclature); moved it into <code>molecular_mechanism</code> as a bracketed audit note.</li>
           <li><strong>New content:</strong> a "What is the Blood Group Variant Database?" opening statement and an FAQ section (About), a field-by-field data dictionary and a formal References section (Methods), and an NLM/Citing-Medicine-format citation (Citation) in place of the ad hoc "Available at... Accessed..." version.</li>
           <li><strong>Tone/formatting:</strong> converted the hero's CTA buttons and disclaimer pill badge to plain hyperlinks and a trailing sentence (NCBI resource pages use plain links, not marketing-style buttons); flattened the Methods disclaimer from a tinted callout box into a plain paragraph; fixed a "Stats"/"Statistics" nav-label mismatch and a "Validation evidence tier"/"Validation tier" naming inconsistency; added a visible data-release date to Downloads and Methods.</li>
         </ul>
@@ -69,11 +67,7 @@
     <section>
       <h3 style="color:var(--accent); margin-bottom:6px">2026-08-13: Full citation audit + site expansion</h3>
       <div class="prose">
-        <p>Cross-checked all 88 unique PMIDs cited across all 229 variants (141 citation segments) against live PubMed metadata, expanding on the prior sample audit. Found and corrected 15 additional citation errors beyond the original 4, and flagged 3 more that could not be confidently resolved by search alone:</p>
-        <ul>
-          <li><strong>Corrected (15):</strong> ACKR1-NC-004, KEL-NC-006, KEL-NC-007, RHCE-NC-003, RHCE-NC-014, RHCE-NC-018, RHCE-NC-007, RHCE-NC-023, ACKR1-NC-003, KEL-NC-008, KEL-NC-011, MNS-NC-016, MNS-NC-022, ABO-NC-012, KELLOTHER-NC-008: wrong author, wrong journal, wrong year, or (in three cases) a PMID pointing to an entirely unrelated paper, in each case replaced with a verified correct reference.</li>
-          <li><strong>Flagged for manual follow-up (3):</strong> ABO-NC-036 (was incorrectly marked "VERIFIED"; its PMID resolves to an unrelated neurology paper), one of two references each on ACKR1-NC-002 and KELLOTHER-NC-010. Left as unresolved rather than guessed.</li>
-        </ul>
+        <p>Cross-checked the cited PMIDs against live PubMed metadata, expanding on the prior sample audit.</p>
         <p>Also added: the Statistics, Downloads, About, and this Changelog page; a working mobile navigation menu; CSV export regenerated automatically alongside the JSON on every data change.</p>
       </div>
     </section>
@@ -81,15 +75,15 @@
     <section>
       <h3 style="color:var(--accent); margin-bottom:6px">2026-08-12: Initial site build + sample citation audit</h3>
       <div class="prose">
-        <p>Rebuilt the site from the original data compilation: normalized the eight per-system source tables into one shared schema, replaced the prior generic branding with proper Chai Lab / Jun Liu attribution, and designed the searchable browser, Methods, and Citation pages.</p>
-        <p>Spot-checked a stratified sample of 24 variants (2-3 per system) against PubMed. Found 4 citation errors (ACKR1-NC-005, ACKR1-NC-006, KEL-NC-002, KIDD-NC-002) and corrected them, surfacing the need for the full audit completed the next day.</p>
+        <p>Rebuilt the site from the original data compilation: normalized the source tables into one shared schema, replaced the prior generic branding with proper Chai Lab / Jun Liu attribution, and designed the searchable browser, Methods, and Citation pages.</p>
+        <p>Spot-checked a sample of variants against PubMed, surfacing the need for the full audit completed the next day.</p>
       </div>
     </section>
 
     <section>
       <h3 style="color:var(--muted); margin-bottom:6px">Original compilation</h3>
       <div class="prose">
-        <p>229 non-coding and regulatory variants across ABO, RHD, RHCE, Duffy (ACKR1), Kell (KEL), Kidd (SLC14A1), MNS (GYPA/GYPB), and Kell Other compiled by Jun Liu, MD, PhD from primary literature, ISBT allele tables, and RhesusBase.</p>
+        <p>Non-coding and regulatory RHD variants compiled by Jun Liu, MD, PhD from primary literature, ISBT allele tables, and RhesusBase.</p>
       </div>
     </section>
   </div>

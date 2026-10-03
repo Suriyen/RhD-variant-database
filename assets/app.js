@@ -219,7 +219,6 @@
     var state = {
       q: "",
       // multi-select filters: an empty array means "all"
-      system: [],
       category: [],
       validation: [],
       audit: [],
@@ -227,14 +226,8 @@
       sortDir: 1,
     };
 
-    var systems = [];
-    DATA.forEach(function (r) {
-      if (systems.indexOf(r.system) === -1) systems.push(r.system);
-    });
-
     var els = {
       search: document.getElementById("q"),
-      systemSel: document.getElementById("f-system"),
       categorySel: document.getElementById("f-category"),
       validationSel: document.getElementById("f-validation"),
       auditSel: document.getElementById("f-audit"),
@@ -243,7 +236,6 @@
       tbody: table,
       empty: document.getElementById("empty-state"),
       tableScroll: document.querySelector(".table-scroll"),
-      systemCards: document.querySelectorAll("[data-system-card]"),
       sortButtons: document.querySelectorAll("[data-sort]"),
     };
 
@@ -262,13 +254,11 @@
     });
 
     function onFilterChange() {
-      state.system = els.systemSel.get();
       state.category = els.categorySel.get();
       state.validation = els.validationSel.get();
       state.audit = els.auditSel.get();
       render();
     }
-    els.systemSel = multiSelect(els.systemSel, onFilterChange);
     els.categorySel = multiSelect(els.categorySel, onFilterChange);
     els.validationSel = multiSelect(els.validationSel, onFilterChange);
     els.auditSel = multiSelect(els.auditSel, onFilterChange);
@@ -278,7 +268,6 @@
     }
 
     function matches(r) {
-      if (!inSet(state.system, r.system)) return false;
       if (!inSet(state.category, categoryBucket(r.variant_category))) return false;
       if (state.validation.length && !validationTiers(r.validation_level).some(function (t) { return state.validation.indexOf(t.label) > -1; })) return false;
       if (!inSet(state.audit, auditTier(r.audit_status).label)) return false;
@@ -345,16 +334,12 @@
         if (!arrow) return;
         arrow.textContent = b.dataset.sort === state.sortKey ? (state.sortDir === 1 ? "↑" : "↓") : "";
       });
-
-      els.systemCards.forEach(function (card) {
-        card.classList.toggle("is-active", state.system.indexOf(card.dataset.systemCard) > -1);
-      });
     }
 
     els.search.addEventListener("input", function () { state.q = this.value; render(); });
     els.clear.addEventListener("click", function () {
       state.q = ""; els.search.value = "";
-      [els.systemSel, els.categorySel, els.validationSel, els.auditSel].forEach(function (m) { m.set([]); });
+      [els.categorySel, els.validationSel, els.auditSel].forEach(function (m) { m.set([]); });
       onFilterChange();
     });
 
@@ -363,18 +348,6 @@
         var key = btn.dataset.sort;
         if (state.sortKey === key) { state.sortDir *= -1; } else { state.sortKey = key; state.sortDir = 1; }
         render();
-      });
-    });
-
-    els.systemCards.forEach(function (card) {
-      card.addEventListener("click", function () {
-        // Card click shows just that system; clicking it again when it's the
-        // only one selected clears the system filter.
-        var sys = card.dataset.systemCard;
-        var only = state.system.length === 1 && state.system[0] === sys;
-        els.systemSel.set(only ? [] : [sys]);
-        onFilterChange();
-        document.getElementById("browse").scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
 
@@ -470,12 +443,7 @@
 
     render();
 
-    // Deep-link support: ?system=RHD or #RHD-NC-004
-    var params = new URLSearchParams(window.location.search);
-    if (params.get("system")) {
-      els.systemSel.set(params.get("system").split(","));
-      onFilterChange();
-    }
+    // Deep-link support: #RHD-NC-004 opens that variant
     if (window.location.hash) {
       var wanted = window.location.hash.replace("#", "");
       var match = DATA.find(function (r) { return r.variant_id === wanted; });
@@ -512,13 +480,6 @@
       }).join("");
     }
 
-    var SYSTEM_ORDER = ["ABO", "RHD", "RHCE", "Duffy", "Kell", "Kidd", "MNS", "KellOther"];
-    var SYSTEM_LABELS = { ABO: "ABO", RHD: "RHD", RHCE: "RHCE", Duffy: "Duffy (ACKR1)", Kell: "Kell (KEL)", Kidd: "Kidd (SLC14A1)", MNS: "MNS (GYPA/GYPB)", KellOther: "Kell Other" };
-    var bySystem = count(function (r) { return r.system; });
-    var bySystemLabeled = {};
-    SYSTEM_ORDER.forEach(function (s) { bySystemLabeled[SYSTEM_LABELS[s]] = bySystem[s] || 0; });
-    renderBars("chart-system", bySystemLabeled, SYSTEM_ORDER.map(function (s) { return SYSTEM_LABELS[s]; }));
-
     renderBars("chart-category", count(function (r) { return categoryBucket(r.variant_category); }));
 
     var VAL_ORDER = ["Clinical / Serological", "Functional / Cell culture", "Database only", "In silico / unvalidated", "Not characterized"];
@@ -543,13 +504,9 @@
     renderBars("chart-be", count(function (r) { return beTier(r.be4max_feasibility, r.abe8e_feasibility).label; }), BE_ORDER, beCls);
 
     // headline stat tiles
-    // Some records store two genes in one field (e.g. "GYPA/GYPB" for MNS);
-    // split on "/" so the gene count reflects distinct gene loci, not strings.
-    var geneSet = new Set();
-    DATA.forEach(function (r) {
-      (r.gene || "").split("/").forEach(function (g) { if (g) geneSet.add(g.trim()); });
-    });
-    var genes = Array.from(geneSet);
+    var withSerology = DATA.filter(function (r) {
+      return validationTiers(r.validation_level).some(function (t) { return t.label === "Clinical / Serological"; });
+    }).length;
     var refs = new Set();
     DATA.forEach(function (r) {
       (r.key_reference || "").split(";").forEach(function (seg) {
@@ -557,10 +514,11 @@
         if (m) refs.add(m[0]);
       });
     });
-    var withAF = DATA.filter(function (r) { return r.gnomad_v4_af_global && r.gnomad_v4_af_global !== "N/A"; }).length;
+    // only entries whose gnomAD field holds an actual frequency (not "N/A (not in gnomAD)")
+    var withAF = DATA.filter(function (r) { return parseAF(r.gnomad_v4_af_global) !== null; }).length;
     var setText = function (id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
     setText("stat-total", DATA.length);
-    setText("stat-genes", genes.length);
+    setText("stat-serology", withSerology);
     setText("stat-refs", refs.size + "+");
     setText("stat-af", withAF);
   }

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blood Group Variant Database: Non-coding & Regulatory Variants</title>
-<meta name="description" content="A curated database of non-coding and regulatory variants across 6 ISBT blood group systems (ABO, RH, MNS, KEL, FY, JK; 8 genes) with ISBT nomenclature, gnomAD frequencies, validation evidence, and base-editing feasibility annotations.">
+<meta name="description" content="A curated database of non-coding and regulatory variants in the RHD gene (Rh blood group system, ISBT 004) with ISBT nomenclature, gnomAD frequencies, validation evidence, and base-editing feasibility annotations.">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -23,6 +23,7 @@
       <a href="about.html">About</a>
       <a href="changelog.html">Changelog</a>
     </div>
+    
     <div class="nav-right">
       <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -35,15 +36,15 @@
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <h1>Non-coding &amp; regulatory variants across the human blood group systems</h1>
-      <p class="lede">A curated, searchable catalog of promoter, UTR, splice-site, intronic, and structural variants affecting ABO, Rh, Duffy, Kell, Kidd, and MNS antigen expression, compiled from primary literature, ISBT allele tables, and RhesusBase, with gnomAD population frequencies and base-editing feasibility annotations. This is a research resource and is not intended for clinical use.</p>
+      <h1>Non-coding &amp; regulatory variants in the RHD gene</h1>
+      <p class="lede">A curated, searchable catalog of promoter, UTR, splice-site, intronic, and structural variants affecting RhD antigen expression, compiled from primary literature, ISBT allele tables, RhesusBase, and RHeference, with gnomAD population frequencies and base-editing feasibility annotations. This is a research resource and is not intended for clinical use.</p>
       <p class="lede"><a href="#browse">Browse the variants</a> &middot; <a href="methods.html">Read the methods</a> &middot; <a href="methods.html#scope">See the scope</a></p>
     </div>
     <div class="stat-panel">
       <div class="stat-grid">
-        <div><div class="stat-num">234</div><div class="stat-label">Curated variants</div></div>
-        <div><div class="stat-num">6</div><div class="stat-label">ISBT blood group systems</div></div>
-        <div><div class="stat-num">8</div><div class="stat-label">Genes covered</div></div>
+        <div><div class="stat-num">86</div><div class="stat-label">Curated variants</div></div>
+        <div><div class="stat-num">004</div><div class="stat-label">ISBT system (Rh)</div></div>
+        <div><div class="stat-num">RHD</div><div class="stat-label">Gene covered</div></div>
         <div><div class="stat-num">4</div><div class="stat-label">Validation tiers</div></div>
       </div>
       <div class="stat-foot">Compiled by Jun Liu, MD, PhD; Devin Friedrich; Suriyen Subramaniam; Vedaamrutha Reddy; and William Yang &middot; Chai Lab, Brigham and Women's Hospital / Harvard Medical School. See <a href="download-cite.html#cite">how to cite this resource</a>.</div>
@@ -51,30 +52,11 @@
   </div>
 </header>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Genes &amp; antigen groupings in this release</h2>
-      <p>Select a gene or antigen grouping to filter the browser below, or open the browser unfiltered and search across all 234 entries.</p>
-    </div>
-    <div class="system-grid">
-      <button class="system-card" data-system-card="ABO"><span class="gene">ABO</span><span class="sys-name">ABO &middot; ISBT 001 &middot; chr9</span><span class="sys-count">56<small>variants</small></span></button>
-      <button class="system-card" data-system-card="RHD"><span class="gene">RHD</span><span class="sys-name">Rh &middot; ISBT 004 &middot; chr1</span><span class="sys-count">86<small>variants</small></span></button>
-      <button class="system-card" data-system-card="RHCE"><span class="gene">RHCE</span><span class="sys-name">Rh &middot; ISBT 004 &middot; chr1</span><span class="sys-count">22<small>variants</small></span></button>
-      <button class="system-card" data-system-card="Duffy"><span class="gene">ACKR1</span><span class="sys-name">Duffy (FY) &middot; ISBT 008 &middot; chr1</span><span class="sys-count">6<small>variants</small></span></button>
-      <button class="system-card" data-system-card="Kell"><span class="gene">KEL</span><span class="sys-name">Kell (KEL) &middot; ISBT 006 &middot; chr7</span><span class="sys-count">19<small>variants</small></span></button>
-      <button class="system-card" data-system-card="Kidd"><span class="gene">SLC14A1</span><span class="sys-name">Kidd (JK) &middot; ISBT 009 &middot; chr18</span><span class="sys-count">13<small>variants</small></span></button>
-      <button class="system-card" data-system-card="MNS"><span class="gene">GYPA / GYPB</span><span class="sys-name">MNS &middot; ISBT 002 &middot; chr4</span><span class="sys-count">22<small>variants</small></span></button>
-      <button class="system-card" data-system-card="KellOther"><span class="gene">KEL</span><span class="sys-name">Kell (KEL) &middot; Kp<sup>a</sup>/Kp<sup>b</sup>, Js<sup>a</sup>/Js<sup>b</sup></span><span class="sys-count">10<small>variants</small></span></button>
-    </div>
-  </div>
-</section>
-
 <section class="section" id="browse">
   <div class="wrap">
     <div class="section-head">
       <h2>Browse &amp; search</h2>
-      <p>Filter by system, functional category, evidence tier, or curation audit status.<br>Click any row to open the full record, including molecular mechanism, population frequencies, and base-editing feasibility.</p>
+      <p>Filter by functional category, evidence tier, or curation audit status.<br>Click any row to open the full record, including molecular mechanism, population frequencies, and base-editing feasibility.</p>
     </div>
 
     <div class="browser-shell">
@@ -86,17 +68,6 @@
           </div>
         </div>
         <div class="filter-row">
-          <select id="f-system" aria-label="Filter by system">
-            <option value="">All systems</option>
-            <option value="ABO">ABO</option>
-            <option value="RHD">RHD</option>
-            <option value="RHCE">RHCE</option>
-            <option value="Duffy">Duffy (ACKR1)</option>
-            <option value="Kidd">Kidd (SLC14A1)</option>
-            <option value="MNS">MNS (GYPA/GYPB)</option>
-            <option value="Kell">Kell (KEL)</option>
-            <option value="KellOther">Kell Other</option>
-          </select>
           <select id="f-category" aria-label="Filter by category">
             <option value="">All categories</option>
           </select>
