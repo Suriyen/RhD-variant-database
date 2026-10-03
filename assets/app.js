@@ -5,20 +5,6 @@
 (function () {
   "use strict";
 
-  /* ---------------- mobile nav toggle (shared across pages) ---------------- */
-  function initNavToggle() {
-    var btn = document.getElementById("nav-toggle");
-    var nav = document.querySelector(".site-nav");
-    if (!btn || !nav) return;
-    btn.addEventListener("click", function () {
-      var open = nav.classList.toggle("is-open");
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-    document.querySelectorAll(".nav-mobile a").forEach(function (a) {
-      a.addEventListener("click", function () { nav.classList.remove("is-open"); btn.setAttribute("aria-expanded", "false"); });
-    });
-  }
-
   /* ---------------- theme toggle (shared across pages) ---------------- */
   function initTheme() {
     var root = document.documentElement;
@@ -27,10 +13,8 @@
     var btn = document.querySelector("[data-theme-toggle]");
     if (!btn) return;
     btn.addEventListener("click", function () {
-      var current = root.getAttribute("data-theme");
-      var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      var effectiveCurrent = current || (prefersDark ? "dark" : "light");
-      var next = effectiveCurrent === "dark" ? "light" : "dark";
+      // the site defaults to light; dark only when the visitor picked it
+      var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
       root.setAttribute("data-theme", next);
       localStorage.setItem("bgvdb-theme", next);
     });
@@ -71,6 +55,22 @@
     return { label: "Not characterized", cls: "badge-low" };
   }
 
+  // Evidence can be both clinical and functional (e.g. "Clinical + Functional");
+  // those entries carry both tiers in the table, filter, drawer and stats.
+  function validationTiers(v) {
+    var c = (v || "").toLowerCase();
+    var clinical = /clinical|serological|in vivo/.test(c);
+    var functional = /functional|cell culture/.test(c);
+    if (clinical && functional) return [validationTier("clinical"), validationTier("functional")];
+    return [validationTier(v)];
+  }
+
+  function tierBadges(tiers) {
+    return '<span class="badge-stack">' + tiers.map(function (t) {
+      return '<span class="badge ' + t.cls + '">' + t.label + '</span>';
+    }).join("") + '</span>';
+  }
+
   function auditTier(v) {
     var c = (v || "").toUpperCase();
     if (!c) return { label: "Unaudited", cls: "badge-low" };
@@ -89,12 +89,32 @@
     return { label: "Not assessed", cls: "badge-low" };
   }
 
+  var SUPERSCRIPT = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+
   function fmtAF(x) {
     if (!x || x === "N/A") return "N/A";
-    var n = parseFloat(x);
+    // Only plain numbers ("0.00003025", "7.254e-7") are reformatted; anything with
+    // text or its own notation ("2.96×10⁻⁵", "~7.6×10⁻⁶ (exome)") is shown as written.
+    var n = Number(String(x).trim());
     if (isNaN(n)) return x;
     if (n === 0) return "0";
-    return n.toExponential(2).replace("e-", "×10⁻").replace("+", "");
+    var parts = n.toExponential(2).split("e");
+    var exp = parseInt(parts[1], 10);
+    if (exp === 0) return parts[0];
+    return parts[0] + "×10" + String(exp).replace(/[-0-9]/g, function (c) { return SUPERSCRIPT[c]; });
+  }
+
+  // Numeric value of a frequency for sorting: the first number in the text, in any
+  // of the notations the data uses ("3.0e-5", "2.96×10⁻⁵", "1.365 x 10^-5 (exome)").
+  // Digits inside words (e.g. "gnomAD v4") are ignored. Returns null when there is none.
+  var FROM_SUPERSCRIPT = { "⁻": "-", "⁺": "+", "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9" };
+
+  function parseAF(x) {
+    var m = /(?:^|[^A-Za-z0-9.])(\d+(?:\.\d+)?)(?:\s*[eE]([-+]?\d+)|\s*[×xX]\s*10\s*(?:\^\s*([-+]?\d+)|([⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)))?/.exec(String(x || ""));
+    if (!m) return null;
+    var exp = m[2] || m[3] || (m[4] ? m[4].replace(/./g, function (c) { return FROM_SUPERSCRIPT[c]; }) : "0");
+    var n = parseFloat(m[1]) * Math.pow(10, parseInt(exp, 10));
+    return n <= 1 ? n : null; // a frequency can't exceed 1 (e.g. "single allele in 1000G")
   }
 
   /* ---------------- multi-select dropdown ---------------- */
@@ -260,7 +280,7 @@
     function matches(r) {
       if (!inSet(state.system, r.system)) return false;
       if (!inSet(state.category, categoryBucket(r.variant_category))) return false;
-      if (!inSet(state.validation, validationTier(r.validation_level).label)) return false;
+      if (state.validation.length && !validationTiers(r.validation_level).some(function (t) { return state.validation.indexOf(t.label) > -1; })) return false;
       if (!inSet(state.audit, auditTier(r.audit_status).label)) return false;
       if (state.q) {
         var hay = [r.variant_id, r.gene, r.hgvs, r.alternative_notation, r.phenotype, r.dbsnp_rs, r.allele_background, r.key_reference]
@@ -271,7 +291,7 @@
     }
 
     function sortVal(r, key) {
-      if (key === "af") return parseFloat(r.gnomad_v4_af_global) || -1;
+      if (key === "af") { var af = parseAF(r.gnomad_v4_af_global); return af === null ? -1 : af; }
       return (r[key] || "").toString().toLowerCase();
     }
 
@@ -296,7 +316,7 @@
         els.empty.style.display = "none";
         els.tbody.parentElement.parentElement.style.display = "";
         filtered.forEach(function (r) {
-          var val = validationTier(r.validation_level);
+          var vals = validationTiers(r.validation_level);
           var aud = auditTier(r.audit_status);
           var tr = document.createElement("tr");
           tr.setAttribute("tabindex", "0");
@@ -309,7 +329,7 @@
             '<td class="cell-trunc" title="' + esc(r.phenotype || "") + '">' + esc(r.phenotype || "N/A") + '</td>' +
             '<td>' + esc(categoryBucket(r.variant_category)) + '</td>' +
             '<td class="mono">' + esc(fmtAF(r.gnomad_v4_af_global)) + '</td>' +
-            '<td><span class="badge ' + val.cls + '">' + val.label + '</span></td>' +
+            '<td>' + tierBadges(vals) + '</td>' +
             '<td><span class="badge ' + aud.cls + '">' + aud.label + '</span></td>';
           tr.addEventListener("click", function () { openDrawer(r); });
           tr.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openDrawer(r); } });
@@ -374,7 +394,7 @@
       drawerTitle.textContent = r.variant_id;
       drawerSub.textContent = r.gene + " · " + r.system_label;
 
-      var val = validationTier(r.validation_level);
+      var vals = validationTiers(r.validation_level);
       var aud = auditTier(r.audit_status);
       var be = beTier(r.be4max_feasibility, r.abe8e_feasibility);
 
@@ -402,7 +422,7 @@
         '<div class="field-group"><h4>Classification</h4><div class="field-list">' +
           row("Category", r.variant_category) +
           row("Mutation type", r.mutation_type) +
-          '<div class="field-row"><dt>Validation</dt><dd><span class="badge ' + val.cls + '">' + val.label + '</span> <span style="color:var(--muted);font-size:12.5px">' + esc(r.validation_level || "") + '</span></dd></div>' +
+          '<div class="field-row"><dt>Validation</dt><dd>' + tierBadges(vals) + ' <span style="color:var(--muted);font-size:12.5px">' + esc(r.validation_level || "") + '</span></dd></div>' +
           '<div class="field-row"><dt>Audit status</dt><dd><span class="badge ' + aud.cls + '">' + aud.label + '</span> <span style="color:var(--muted);font-size:12.5px">' + esc((r.audit_status || "").replace(/^(FLAGGED|CORRECTED|VERIFIED|LIKELY VALID):?\s*/, "")) + '</span></dd></div>' +
         '</div></div>' +
 
@@ -472,8 +492,8 @@
     function count(getKey) {
       var c = {};
       DATA.forEach(function (r) {
-        var k = getKey(r);
-        c[k] = (c[k] || 0) + 1;
+        // a key function may return several keys (e.g. a variant with two validation tiers)
+        [].concat(getKey(r)).forEach(function (k) { c[k] = (c[k] || 0) + 1; });
       });
       return c;
     }
@@ -506,7 +526,7 @@
       var map = { "Clinical / Serological": "tier-good", "Functional / Cell culture": "tier-mid" };
       return map[label] || "tier-low";
     }
-    renderBars("chart-validation", count(function (r) { return validationTier(r.validation_level).label; }), VAL_ORDER, valCls);
+    renderBars("chart-validation", count(function (r) { return validationTiers(r.validation_level).map(function (t) { return t.label; }); }), VAL_ORDER, valCls);
 
     var AUDIT_ORDER = ["Verified", "Likely valid", "Corrected", "Flagged", "Unaudited"];
     function auditCls(label) {
@@ -562,7 +582,6 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
-    initNavToggle();
     initBrowser();
     initStats();
     initCopyButtons();

@@ -2,7 +2,7 @@
    Blood Group Variant Database: shared styles
    Design language: clinical-genomics resource (ISBT / BGMUT structure,
    gnomAD-style browser density). One accent color, one type system,
-   light/dark via prefers-color-scheme with a manual override.
+   light by default; dark via the manual toggle.
    ==================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -71,36 +71,7 @@
   --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ink: #e8eaf0;
-    --ink-soft: #b7bcc8;
-    --muted: #8a90a0;
-    --paper: #0e1013;
-    --surface: #15181d;
-    --surface-raised: #1a1e25;
-    --border: #262b34;
-    --border-strong: #363c48;
-    --accent: #6f9aef;
-    --accent-ink: #0e1013;
-    --accent-soft: #182236;
-    --accent-soft-border: #29385c;
-    --focus: #6f9aef;
-    --code-bg: #1b1f27;
-    --tier-good: #57c98c;
-    --tier-good-bg: #10251b;
-    --tier-mid: #e8b64a;
-    --tier-mid-bg: #2a2110;
-    --tier-low: #a89ee0;
-    --tier-low-bg: #1c1f25;
-    --tier-flag: #e88a8a;
-    --tier-flag-bg: #2a1414;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
-  }
-}
-
-html { color-scheme: light dark; }
+html { color-scheme: light; }
 /* keep anchor targets clear of the sticky nav */
 html { scroll-padding-top: calc(var(--nav-h) + 16px); }
 /* follow the manual theme toggle for native controls (checkboxes, scrollbars) */
@@ -151,6 +122,13 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
 .brand-text small { font-weight: 500; color: var(--muted); font-size: 11.5px; }
+/* phones: keep the title and the lab line on one line each */
+@media (max-width: 640px) {
+  .site-nav .wrap { padding: 0 16px; gap: 12px; }
+  .brand { font-size: 13px; gap: 8px; min-width: 0; }
+  .brand-text { min-width: 0; white-space: nowrap; overflow: hidden; }
+  .brand-text small { font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
+}
 
 .nav-links { display: flex; align-items: center; gap: 4px; }
 .nav-links a {
@@ -170,37 +148,18 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 .theme-toggle .icon-moon { display: none; }
 :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
 :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: none; }
-  :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: block; }
-}
 
 .nav-right { display: flex; align-items: center; gap: 8px; }
 
-.nav-toggle {
-  display: none; border: 1px solid var(--border); background: var(--surface); color: var(--ink-soft);
-  width: 36px; height: 36px; border-radius: var(--radius-sm); align-items: center; justify-content: center;
-  cursor: pointer; flex: none;
-}
-.nav-toggle:hover { background: var(--code-bg); }
-.nav-toggle svg { width: 18px; height: 18px; }
-
-.nav-mobile {
-  display: none; flex-direction: column; padding: 4px 24px 14px;
-  border-top: 1px solid var(--border); background: var(--surface);
-}
-.nav-mobile a {
-  padding: 11px 4px; font-size: 14.5px; font-weight: 500; color: var(--ink-soft);
-  border-bottom: 1px solid var(--border-light);
-}
-.nav-mobile a:last-child { border-bottom: none; }
-.nav-mobile a[aria-current="page"] { color: var(--accent); }
-.nav-mobile a:hover { color: var(--ink); text-decoration: none; }
-
+/* narrower screens: the page tabs become a row of buttons under the title.
+   The bar stops being sticky here, since the extra row would cover too much of the page. */
 @media (max-width: 1040px) {
-  .nav-links { display: none; }
-  .nav-toggle { display: flex; }
-  .site-nav.is-open .nav-mobile { display: flex; }
+  .site-nav { position: static; }
+  html { scroll-padding-top: 16px; }
+  .site-nav .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 12px; row-gap: 10px; }
+  .nav-links { order: 3; width: 100%; flex-wrap: wrap; gap: 6px; }
+  .nav-links a { border: 1px solid var(--border); background: var(--surface); padding: 6px 12px; font-size: 13px; }
+  .nav-links a[aria-current="page"] { border-color: var(--accent-soft-border); }
 }
 
 /* ---------- hero ---------- */
@@ -341,6 +300,7 @@ table.variant-table { width: 100%; border-collapse: collapse; font-size: 13.5px;
    and let the table keep readable column widths, scrolling sideways instead */
 @media (max-width: 640px) {
   .variant-table th:nth-child(5), .variant-table td:nth-child(5) { display: none; }
+  .variant-table .cell-trunc { white-space: normal; overflow: visible; } /* phenotype wraps instead of "…" */
   .table-scroll { overflow-x: auto; }
   table.variant-table { min-width: 720px; }
 }
@@ -367,6 +327,8 @@ table.variant-table { width: 100%; border-collapse: collapse; font-size: 13.5px;
   display: inline-flex; align-items: center; font-size: 11.5px; font-weight: 600;
   padding: 2px 8px; border-radius: 999px; white-space: nowrap; line-height: 1.6;
 }
+/* a variant with two validation tiers shows both badges */
+.badge-stack { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: middle; }
 .badge-good { color: var(--tier-good); background: var(--tier-good-bg); }
 .badge-mid { color: var(--tier-mid); background: var(--tier-mid-bg); }
 .badge-low { color: var(--tier-low); background: var(--tier-low-bg); }
@@ -441,6 +403,10 @@ table.variant-table { width: 100%; border-collapse: collapse; font-size: 13.5px;
 .legend-row { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; }
 .legend-row .badge { margin-top: 1px; }
 .legend-row span { color: var(--ink-soft); }
+/* phones: badge above its description so every description starts at the left edge */
+@media (max-width: 640px) {
+  .legend-row { flex-direction: column; gap: 4px; }
+}
 
 .system-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .system-table th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border-strong); }
