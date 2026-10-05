@@ -77,7 +77,6 @@
     if (c.indexOf("FLAGGED") === 0) return { label: "Flagged", cls: "badge-flag" };
     if (c.indexOf("CORRECTED") === 0) return { label: "Corrected", cls: "badge-mid" };
     if (c.indexOf("VERIFIED") === 0) return { label: "Verified", cls: "badge-good" };
-    if (c.indexOf("LIKELY VALID") === 0) return { label: "Likely valid", cls: "badge-good" };
     return { label: "Unaudited", cls: "badge-low" };
   }
 
@@ -489,9 +488,9 @@
     }
     renderBars("chart-validation", count(function (r) { return validationTiers(r.validation_level).map(function (t) { return t.label; }); }), VAL_ORDER, valCls);
 
-    var AUDIT_ORDER = ["Verified", "Likely valid", "Corrected", "Flagged", "Unaudited"];
+    var AUDIT_ORDER = ["Verified", "Corrected", "Flagged", "Unaudited"];
     function auditCls(label) {
-      var map = { "Verified": "tier-good", "Likely valid": "tier-good", "Corrected": "tier-mid", "Flagged": "tier-flag" };
+      var map = { "Verified": "tier-good", "Corrected": "tier-mid", "Flagged": "tier-flag" };
       return map[label] || "tier-low";
     }
     renderBars("chart-audit", count(function (r) { return auditTier(r.audit_status).label; }), AUDIT_ORDER, auditCls);
