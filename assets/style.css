@@ -165,6 +165,13 @@ p { margin: 0 0 1em; color: var(--ink-soft); }
 /* ---------- hero ---------- */
 .hero { padding: 56px 0 40px; border-bottom: 1px solid var(--border); }
 .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: start; }
+/* walkthrough video under the hero text, above the section divider */
+.demo-video { max-width: 960px; margin: 40px auto 0; }
+.demo-video video {
+  display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--code-bg);
+  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm);
+}
+.demo-video figcaption { margin-top: 10px; font-size: 13px; color: var(--muted); text-align: center; }
 @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 28px; } }
 
 .eyebrow {

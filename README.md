@@ -1,6 +1,6 @@
 # Blood Group Non-Coding Variant Database
 
-A static, searchable website cataloging **86 non-coding and regulatory
+A static, searchable website cataloging **77 non-coding and regulatory
 variants** in the RHD gene (Rh blood group system, ISBT 004).
 
 The site previously also covered ABO, RHCE, Duffy (ACKR1), Kell (KEL), Kidd
